@@ -1,1 +1,43 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>3D Tiles Viewer</title>
+  <script src="https://cesium.com/downloads/cesiumjs/releases/1.116/Build/Cesium/Cesium.js"></script>
+  <link href="https://cesium.com/downloads/cesiumjs/releases/1.116/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+  <style>
+    body, html { margin: 0; padding: 0; overflow: hidden; }
+    #cesiumContainer { width: 100vw; height: 100vh; }
+  </style>
+</head>
+<body>
+  <div id="cesiumContainer"></div>
+  <script>
+    // 初始化 Cesium Viewer
+    const viewer = new Cesium.Viewer('cesiumContainer', {
+      terrainProvider: Cesium.createWorldTerrain(),
+      baseLayerPicker: false,
+      animation: false,
+      timeline: false,
+      fullscreenButton: false,
+      vrButton: false
+    });
+
+    // 加载 3DTiles（注意路径要匹配你的实际结构）
+    const tileset = new Cesium.Cesium3DTileset({
+      url: './models/11-NE-22D/tileset.json'
+    });
+
+    viewer.scene.primitives.add(tileset);
+
+    // 自动聚焦到模型
+    tileset.readyPromise.then(() => {
+      viewer.zoomTo(tileset, new Cesium.HeadingPitchRange(0, -0.5, tileset.boundingSphere.radius * 2));
+    }).otherwise((error) => {
+      console.error('加载 3DTiles 失败:', error);
+    });
+  </script>
+</body>
+</html>
